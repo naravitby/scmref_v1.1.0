@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/modalVersion.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="modal">
+        <a href="#" class="close" id="btnClose">X</a>
+        <p class="head">New Version</p>
+        <div class="content">
+            <div class="container">
+                <p>There is a new version (1.1.0) is available to download
+                    Please visit our website to download a new
+                    version at <a id="linkSoftware" href="">www.scmrefthai.com/software</a>
+                </p>
+            </div>
+        </div>
+        <div class="buttonDiv">
+            <a href="#" class="myButton" id="btnOk">Close</a>
+        </div>
+    </div>
+
+    <script>
+        const ipc = require('electron').ipcRenderer;
+        const remote = require('electron').remote;
+        document.getElementById('linkSoftware').addEventListener('click', (event) => {
+            event.preventDefault();
+            require("electron").shell.openExternal("https://scmrefthai.com/software");
+        })
+        document.getElementById('btnOk').addEventListener('click', (event) => {
+            let currentWindow = remote.getCurrentWindow();
+            currentWindow.close();
+        })
+        document.getElementById('btnClose').addEventListener('click', (event) => {
+            let currentWindow = remote.getCurrentWindow();
+            currentWindow.close();
+        })
+    </script>
+</body>
+
+</html>

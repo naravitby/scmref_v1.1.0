@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/cduPage.css">
+    <!-- <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+     <link rel="stylesheet" href="../node_modules/bootstrap/dist/js/bootstrap.min.js">  -->
+    <!--<link rel="stylesheet" href="../node_modules/chart.js/dist/Chart.min.css">  -->
+
+    <script src="../node_modules/chart.js/dist/Chart.min.js"></script>
+    <title>Condensing Units</title>
+    <script>
+        const ipc = require('electron').ipcRenderer;
+    </script>
+
+</head>
+
+<body>
+    <div id="outer">
+        <div class="sidebar">
+            <div class="sidebar-container">
+                <div class="section-logo">
+                    <div>
+                        <div class="back" id="back-btn"><a href="#"><img src="../img/back.png" alt=""></a></div>
+                        <div class="logo" id="logo"><a href="#"><img src="../img/scmref.png" alt=""></a>
+                            <select id="select-unit">
+                                <option value="1111">SI Units</option>
+                                <option value="2222">IP Units</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="title-cdu">
+                        <h1>Condensing Units</h1>
+                    </div>
+                    <div class="buttons">
+                        <a href="" id="clear-all">Clear All</a>
+                        <a href="#" id="calculate">Calculate</a>
+                    </div>
+                </div>
+
+                <div class="section-top">
+                    <div class="type" id="test02">
+                        <label for="type">Type</label><br>
+                        <select id="select-page">
+                            <option value="Condensing Units">Condensing Units</option>
+                            <option value="Unit Coolers">Unit Coolers</option>
+                            <option value="CDU and Unit Coolers">CDU and Unit Coolers</option>
+                        </select>
+                    </div>
+
+                    <div class="refrigerant">
+                        <label for="type">Refrigerant</label><br>
+                        <select name="" id="select-refrigerant">
+                            <option value=""></option>
+                        </select><br>
+                        <label for="type">Application</label><br>
+                        <label><input type="radio" name="temp" id="radio-app-med" checked value="med_temp"> Medium
+                            Temp</label>
+                        <label><input type="radio" name="temp" id="radio-app-low" value="low_temp"> Low Temp</label>
+                    </div>
+                </div>
+
+                <!-- <select id="select-unit">
+                    <option value="1111">SI</option>
+                    <option value="2222">Imperial</option>
+                </select> -->
+
+                <div class="section-operating">
+                    <p id="operatingHead">Operating Point</p>
+                    <div class="operating-content">
+                        <label for="type" id="label-evap">Evaporating SST (°C)</label><br>
+                        <input type="text" name="" id="text-sst" onkeypress="return isNumberKey(event,this)"
+                            oninput="validate(this)"> <label for=""></label><br>
+                        <label for="type" id="label-ambient">Ambient Temp (°C)</label><br>
+                        <input type="text" name="" id="text-ambient" onkeypress="return isNumberKey(event,this)"
+                            oninput="validate(this)"> <label for=""></label><br>
+                    </div>
+                </div>
+
+                <div class="section-selection">
+                    <p id="selectionHead">Condensing Units Selection</p>
+                    <div class="selection-content">
+                        <div class="1">
+                            <label for="type">Brand</label><br>
+                            <select name="" id="select-brand">
+                                <option value=""></option>
+                            </select><br></div>
+                        <div class="2">
+                            <label for="type">Standard Type</label><br>
+                            <select name="" id="select-type">
+                                <option value=""></option>
+                            </select><br>
+                        </div>
+                        <div class="3" style="margin-bottom: 5px;">
+                            <label for="type">Series</label><br>
+                            <select name="" id="select-series">
+                                <option value=""></option>
+                            </select><br>
+                        </div>
+                        <input type="radio" name="choice" id="radio-cooling" checked> <label id="label-cooling"> Cooling
+                            Capacity Requirement
+                            (kW)</label>
+                        <br>
+                        <input type="text" name="" id="text-cooling" onkeypress="return isNumberKeyCooling(event,this)"
+                            oninput="validateCooling(this)"><label for=""></label><br>
+                        <label for="type">Acceptable Range (%)</label><br>
+                        <div>
+                            <span id="sign-minus">&#8722;</span><input type="text" name="" id="text-acceptable-mins"
+                                value="10">
+                            <span id="sign-plus">&#43;</span><input type="text" name="" id="text-acceptable-plus"
+                                value="10">
+                        </div>
+                        <input type="radio" name="choice" id="radio-model"> Condensing Units Model <br>
+                        <select name="" id="select-model" disabled="true" style="opacity: 0.5;">
+                            <option value=""></option>
+                        </select>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content" id="">
+            <div class="content-container">
+                <div class="result" id="result">
+                    <h1>Condensing Units</h1>
+                    <table id="cduTable">
+                        <tr>
+                            <th>CDU Model</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Brand</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Series</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Capacity Matching</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Cooling Capacity</th>
+                            <td class="unit-kw"></td>
+                            <td class="unit-kw"></td>
+                            <td class="unit-kw"></td>
+                            <td class="unit-kw"></td>
+                            <td class="unit-kw"></td>
+                        </tr>
+                        <tr>
+                            <th>Total Power Input</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Condensing Temp</th>
+                            <td class="unit-c"></td>
+                            <td class="unit-c"></td>
+                            <td class="unit-c"></td>
+                            <td class="unit-c"></td>
+                            <td class="unit-c"></td>
+                        </tr>
+                        <tr>
+                            <th>Heat Reject</th>
+                            <td class="unit-kw"></td>
+                            <td class="unit-kw"></td>
+                            <td class="unit-kw"></td>
+                            <td class="unit-kw"></td>
+                            <td class="unit-kw"></td>
+                        </tr>
+                        <tr>
+                            <th id="result-cop-label">COP</th>
+                            <td class="unit-cop"></td>
+                            <td class="unit-cop"></td>
+                            <td class="unit-cop"></td>
+                            <td class="unit-cop"></td>
+                            <td class="unit-cop"></td>
+                        </tr>
+                        <tr>
+                            <th>Compressor Current</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Mass Flow</th>
+                            <td class="unit-gs"></td>
+                            <td class="unit-gs"></td>
+                            <td class="unit-gs"></td>
+                            <td class="unit-gs"></td>
+                            <td class="unit-gs"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tabs" id="tabs">
+                    <!-- <h1 id="tab-model">Tabs</h1> -->
+                    <div class="tabs-warpper">
+                        <input class="radio" id="one" name="group" type="radio" checked>
+                        <input class="radio" id="two" name="group" type="radio">
+                        <input class="radio" id="three" name="group" type="radio">
+                        <input class="radio" id="four" name="group" type="radio">
+                        <input class="radio" id="five" name="group" type="radio">
+                        <input class="radio" id="six" name="group" type="radio">
+                        <input class="radio" id="seven" name="group" type="radio">
+                        <div class="tabs">
+                            <label class="tab" id="one-tab" for="one">Limits</label>
+                            <label class="tab" id="two-tab" for="two">Performance Tables</label>
+                            <label class="tab" id="three-tab" for="three">Technical Data</label>
+                            <label class="tab" id="four-tab" for="four">Dimensions</label>
+                            <label class="tab" id="five-tab" for="five">Documentation</label>
+                            <label class="tab" id="six-tab" for="six">Datasheet</label>
+                            <label class="tab" id="seven-tab" for="seven">Operating Summary</label>
+                        </div>
+
+                        <div class="panels">
+                            <div class="panel" id="one-panel">
+                                <div id="one-panel-content">
+                                    <div class="panel-title"></div>
+                                    <p></p>
+                                </div>
+                                <div id="chart-alert" hidden></div>
+                                <div id="chart-div">
+                                    <div id="cdu-note" hidden>
+                                        <p>Note ____________________________________________________</p>
+                                    </div>
+                                    <div id="chart-note" hidden>
+                                        <p>Note ____________________________________________________</p>
+                                    </div>
+                                    <canvas id="myChart" width="200" height="80"></canvas>
+
+                                </div>
+                            </div>
+                            <div class="panel" id="two-panel">
+                                <div id="two-panel-content">
+                                    <div class="panel-title"></div>
+                                    <p>
+                                    </p>
+                                </div>
+                                <div id="step-table-tab" hidden>
+
+                                    <div class="step-top">
+                                        <select id="table-step-dropdown">
+                                            <option value="Capacity" id="step-dropdown-cooling">Cooling Capacity (kW)
+                                            </option>
+                                            <option value="PowerInput" id="step-dropdown-power">Total Power Input (kW)
+                                            </option>
+                                            <option value="Condensing" id="step-dropdown-condensing">Condensing Temp
+                                                (°C)</option>
+                                            <option value="HeatReject" id="step-dropdown-heatreject">Heat Reject (kW)
+                                            </option>
+                                            <option value="COP" id="step-dropdown-cop">COP</option>
+                                            <option value="Current" id="step-dropdown-current">Compressor Current (A)
+                                            </option>
+                                            <option value="MassFlow" id="step-dropdown-massflow">Mass Flow (g/s)
+                                            </option>
+                                        </select><br>
+                                    </div>
+
+                                    <table id="step">
+                                        <tr>
+                                            <td>Evaporating Temp</td>
+                                            <td>Start</td>
+                                            <td><input type="text" id="start-evap" value="" value=""
+                                                    onkeypress="return isNumberKeyStepTable(event,this)"
+                                                    oninput="validateStepTable(this)"><label id="start-evap-unit">
+                                                    °C</label></td>
+                                            <td>Step</td>
+                                            <td><input type="text" id="step-evap" value=""
+                                                    onkeypress="return isNumberKeyStepTable(event,this)"
+                                                    oninput="validateStepTable(this)"><br></td>
+                                            <td><button id="reset-table-step" class="reset">Reset</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Ambient Temp</td>
+                                            <td>Start</td>
+                                            <td><input type="text" id="start-ambient" value="" value=""
+                                                    onkeypress="return isNumberKeyStepTable(event,this)"
+                                                    oninput="validateStepTable(this)"><label id="start-ambient-unit">
+                                                    °C</label></td>
+                                            <td>Step</td>
+                                            <td><input type="text" id="step-ambient" value=""
+                                                    onkeypress="return isNumberKeyStepTable(event,this)"
+                                                    oninput="validateStepTable(this)"><br></td>
+                                            <td><button id="submit-table-step" class="submit">Submit</button></td>
+                                        </tr>
+                                    </table>
+
+                                    <table id="step-result-table">
+                                        <tr>
+                                            <th>Ta/Te</th>
+                                            <th>Temp</th>
+                                            <th>Temp</th>
+                                            <th>Temp</th>
+                                            <th>Temp</th>
+                                            <th>Temp</th>
+                                            <th>Temp</th>
+                                            <th>Temp</th>
+                                            <th>Temp</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Temp</th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Temp</th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Temp</th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Temp</th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Temp</th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="panel" id="three-panel">
+                                <div class="panel-title"></div>
+                                <p></p>
+                            </div>
+                            <div class="panel" id="four-panel">
+                                <div class="panel-title"></div>
+                                <p></p>
+                            </div>
+                            <div class="panel" id="five-panel">
+                                <div class="panel-title"></div>
+                                <p></p>
+                            </div>
+
+                            <div class="panel" id="six-panel">
+                                <div id="six-panel-content">
+                                    <div class="panel-title"></div>
+                                    <p></p>
+                                </div>
+
+                                <div id="datasheet-report" hidden>
+                                    <div class='css-doc' style="text-align: right;">
+                                        <button class='button-doc' id="cdu-btn-export">Export Data</button>
+                                    </div>
+                                    <br>
+                                    <div class="pdf-outer" id="savePDF">
+                                        <div id="header-datasheet">
+                                            <div class="pdf-header">
+                                                <div class="pdf-logo"><img id="logo-data-sheet" width="90%"
+                                                        src="../img/Kaltmer_Gradient_Diecut.png"></div>
+                                                <div class="header-text">
+                                                    <p>Specification Sheet</p>
+                                                    <p id=cpuModel></p>
+                                                    <p>Open Type Semi-Hermetic CDU</p>
+                                                    <p>Air Coole / Medium Temp. / R404A</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="pdf-top">
+                                            <table class="pdf-table-top" id="step-table-datasheet-cap">
+                                                <tr>
+                                                    <th rowspan="2" id="border-bottom-cap" class="border-right-cap">
+                                                        <label id="datasheet-ambient-label">Ambient
+                                                            </br> Temperature (°C)</label></th>
+                                                    <th colspan="7" id="border-bottom-cap">
+                                                        <label id="datasheet-cooling-label">Capacity (kW)</br>
+                                                            Evaporator
+                                                            Temperature (°C)
+                                                        </label>
+                                                    </th>
+                                                </tr>
+                                                <tr id="border-bottom-cap-evap">
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th id="fix-width"
+                                                        style="background-color: #eeeeee; border-bottom: 1px solid black;">
+                                                        Temp</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="border-right-cap" id="fix-td"></th>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-width"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="border-right-cap" id="fix-td">38</th>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-width"></td>
+                                                </tr>
+                                                <tr style="border-bottom:1px solid black ;">
+                                                    <th class="border-right-cap" id="fix-td">43</th>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-width"></td>
+                                                </tr>
+                                            </table>
+                                            <table class="pdf-table-top" id="step-table-datasheet-powerinput">
+                                                <tr>
+                                                    <th rowspan="2" id="border-bottom-cap" class="border-right-cap">
+                                                        <label id="datasheet-ambient-label-two">
+                                                            Ambient
+                                                            </br> Temperature (°C)
+                                                        </label></th>
+                                                    <th colspan="7" id="border-bottom-cap">
+                                                        <label id="datasheet-power-label">
+                                                            Input Power (kW) </br>
+                                                            Evaporator
+                                                            Temperature (°C)
+                                                        </label>
+                                                    </th>
+                                                </tr>
+                                                <tr id="border-bottom-cap-evap">
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th class="border-right-cap-bg">Temp</th>
+                                                    <th id="fix-width"
+                                                        style="background-color: #eeeeee; border-bottom: 1px solid black;">
+                                                        Temp</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="border-right-cap" id="fix-td">32</th>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-width"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="border-right-cap" id="fix-td">38</th>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-width"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="border-right-cap" id="fix-td">43</th>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-border"></td>
+                                                    <td id="fix-width"></td>
+                                                </tr>
+                                            </table>
+                                            <!-- <h1>TOP1</h1>
+                                        <h1>TOP2</h1> -->
+                                        </div>
+                                        <div class="pdf-middle">
+                                            <div class="pdf-middle-left">
+                                                <table class="pdf-table" id="middle-left">
+                                                    <tr>
+                                                        <th colspan="2">Compressor</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Model Name</td>
+                                                        <td class="pdf-table-right"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Max Current (A)</td>
+                                                        <td class="pdf-table-right">14</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Locked Rotor Amp (A)</td>
+                                                        <td class="pdf-table-right">101</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Voltage (V/Ph/Hz)</td>
+                                                        <td class="pdf-table-right">380-420/3/50</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Oil Type</td>
+                                                        <td class="pdf-table-right">POE(32cSt)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Oil Recharge (Liters)</td>
+                                                        <td class="pdf-table-right">3</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="pdf-middle-right">
+                                                <table class="pdf-table" id="middle-right">
+                                                    <tr>
+                                                        <th colspan="2">Fan Motor</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Number of Fan (Pieces)</td>
+                                                        <td class="pdf-table-right">2</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Diameter (mm.)</td>
+                                                        <td class="pdf-table-right">630</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Air Flow m^3/h</td>
+                                                        <td class="pdf-table-right">19089</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Voltage (V/Ph/Hz)</td>
+                                                        <td class="pdf-table-right">380-420/3/50</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Total Fan Motor Power (Watts)</td>
+                                                        <td class="pdf-table-right">1964</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>-</td>
+                                                        <td class="pdf-table-right">-</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="pdf-others">
+                                            <!-- <h1>Others</h1> -->
+                                            <table class="pdf-table" id="middle-others">
+                                                <tr>
+                                                    <th colspan="2">others</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>Oil Separator Volume (Liters)</td>
+                                                    <td class="pdf-table-right">0.6</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Receiver Volume (Liters)</td>
+                                                    <td class="pdf-table-right">19.3</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Pipes Suction OD (Inch)</td>
+                                                    <td class="pdf-table-right">1-5/8</td>
+                                                </tr>
+                                                <tr style="border-bottom:1px solid black ;">
+                                                    <td>Liquid OD (Inch)</td>
+                                                    <td class="pdf-table-right">7/8</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        Note: The rating condition is based on a super heating(10K) ,
+                                                        Subcooling
+                                                        within the limits of the condensing unit
+                                                        The rating condition is based on a super heating(10K) ,
+                                                        Subcooling
+                                                        within the limits of the condensing unit
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="pdf-bottom" id="css-dimension">
+                                            <h1></h1>
+                                            <!-- <h1>Bottom</h1> -->
+                                            <table class="pdf-table">
+                                                <tr>
+                                                    <th colspan="2" id="css-bg-dimension">Dimensions</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align: center;" id="dimension-datasheet">
+
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <table class="pdf-bottom">
+                                            <tr>
+                                                <td colspan="2" id='font-note'>
+                                                    The information in this document is subject to change without
+                                                    prior
+                                                    notice.
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel" id="seven-panel">
+                                <div id="seven-panel-content">
+                                    <div class="panel-title"></div>
+                                    <p></p>
+                                </div>
+                                <div id="IS-report" hidden>
+                                    <div class='css-doc' style="text-align: right;">
+                                        <button class='button-doc' id="cdu-btn-export2">Export Data</button>
+                                    </div>
+                                    <br>
+                                    <div class="IS-outer" id="savePDF2">
+                                        <div id="header-IS">
+                                            <div class="IS-header">
+                                                <div class="IS-logo"><img id="logo-data-sheet" width="90%"
+                                                        src="../img/Kaltmer_Gradient_Diecut.png"></div>
+                                                <div class="IS-text">
+                                                    <p>Indivdaul Specification</p>
+                                                    <p id=cpuModel></p>
+                                                    <p>Open Type Semi-Hermetic CDU</p>
+                                                    <p>Air Coole / Medium Temp. / R404A</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="IS-top">
+                                            <table class="IS-table" id="IS-top">
+                                                <tr>
+                                                    <th colspan="2" id="css-bg-Condensing">Condensing Units</th>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">CDU Model</td>
+                                                    <td class="IS-table-right">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Brand</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Series</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Refrigerant</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Cooling Capacity (kW)</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Application Temp</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Total Power Input</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Heat Reject</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">COP</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Compressor Current</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Mass Flow(g/s)</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Condensing Temp (˚C)</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Design SST (Evap temp) (˚C)</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="border-IS-right">Design Ambient Temp (˚C)</td>
+                                                    <td class="IS-table-right"></td>
+                                                </tr>
+                                            </table>
+                                            <!-- <h1>TOP1</h1>
+                                        <h1>TOP2</h1> -->
+                                        </div>
+                                        <div class="IS-middle" id="IS-middle ">
+                                            <table class="IS-table" id="IS-Note-mid">
+                                                <tr>
+                                                    <td>
+                                                        Note: The rating condition is based on a super heating(10K) ,
+                                                        Subcooling
+                                                        within the limits of the condensing unit
+                                                        The rating condition is based on a super heating(10K) ,
+                                                        Subcooling
+                                                        within the limits of the condensing unit
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="IS-bottom" id="css-Limits">
+                                            <table class="IS-table" id="IS-test">
+                                                <tr>
+                                                    <th id="css-bg-Condensing" style="padding: 5px;">Limits</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="IS-chart"><canvas id="myChart2"></canvas></div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+
+                                        <table class="IS-foot-note">
+                                            <tr>
+                                                <td colspan="2" id='IS-font-note'>
+                                                    The information in this document is subject to change without
+                                                    prior
+                                                    notice.
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>require('../js/cduPage.js')</script>
+    <script>
+        function isNumberKey(evt, obj) {
+
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            var value = obj.value;
+            var dotcontains = value.indexOf(".") != -1;
+            if (dotcontains)
+                if (charCode == 46) return false;
+            if (charCode == 46) return true;
+            if (charCode > 31 && (charCode == 47 || charCode < 45 || charCode > 57))
+                return false;
+            return true;
+        }
+
+        var validate = function (e) {
+            var t = e.value;
+            e.value = (t.indexOf(".") >= 0) ? (t.substr(0, t.indexOf(".")) + t.substr(t.indexOf("."), 2)) : t;
+        }
+        function isNumberKeyCooling(evt, obj) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            var value = obj.value;
+            var dotcontains = value.indexOf(".") != -1;
+            if (dotcontains)
+                if (charCode == 46) return false;
+            if (charCode == 46) return true;
+            if (charCode > 31 && (charCode == 47 || charCode < 45 || charCode > 57))
+                return false;
+            return true;
+        }
+        var validateCooling = function (e) {
+            var t = e.value;
+            e.value = (t.indexOf(".") >= 0) ? (t.substr(0, t.indexOf(".")) + t.substr(t.indexOf("."), 3)) : t;
+        }
+
+        function isNumberKeyStepTable(evt, obj) {
+
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            var value = obj.value;
+            var dotcontains = value.indexOf(".") != -1;
+            if (dotcontains)
+                if (charCode == 46) return false;
+            if (charCode == 46) return true;
+            if (charCode > 31 && (charCode == 47 || charCode < 45 || charCode > 57))
+                return false;
+            return true;
+        }
+
+        var validateStepTable = function (e) {
+            var t = e.value;
+            e.value = (t.indexOf(".") >= 0) ? (t.substr(0, t.indexOf(".")) + t.substr(t.indexOf("."), 1)) : t;
+        }
+    </script>
+</body>
+
+</html>
